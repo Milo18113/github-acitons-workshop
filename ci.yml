@@ -7,10 +7,28 @@ on:
 
 # Jobs: Con una misma tubería de CI se pueden validar múltiples configuraciones 
 # de entornos de ejecución
+## Así como así corren en paralelo, se ejecutan en serie con el needs de test
 jobs:
+  ## Se corre para chequear código estáticamente antes de los tests
+  lint: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout
+      - name: Set up python
+        uses: actions/setup-python@v6
+        with: 
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run lint
+        run: ruff check .
+
   test:
     # Imagen del runner
     runs-on: ubuntu-latest
+    needs: lint
 
     # Para correr diferentes versiones de python
     strategy: 
@@ -20,9 +38,9 @@ jobs:
     # Acciones, una por una
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with: 
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
