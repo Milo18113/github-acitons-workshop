@@ -81,5 +81,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract Docker metadata
-      - name: Push docker image
-        run: docker push github-actions-workshop:latest
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-workshop
+          tags: | 
+            type:raw,value=latest,enable={{is_default_branch}}
+            type:ref,event=branch
+            type:ref,event=tag
+            type:sha
+      - name: Build & Push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .      # Root directory
+          push: true      # Que se mande al dockerhub
+          platform: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
