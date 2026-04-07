@@ -19,9 +19,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout
+        uses: actions/checkout@v4        # ✅ corregido
       - name: Set up python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5   # ✅ v5, no v6
         with: 
           python-version: "3.11"
       - name: Install dependencies
@@ -42,9 +42,9 @@ jobs:
     # Acciones, una por una
     steps: 
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4        # ✅ corregido
       - name: Set up python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5   # ✅ v5, no v6
         with: 
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout
+        uses: actions/checkout@v4        # ✅ corregido
       - name: Build docker image
         run: docker build -t github-actions-workshop:latest .
 
@@ -74,13 +74,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4        # ✅ corregido
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with: 
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Extract Docker metadata
+        id: meta                         # ✅ necesario para steps.meta.outputs
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/github-actions-workshop
